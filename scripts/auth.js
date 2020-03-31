@@ -2,12 +2,17 @@
 auth.onAuthStateChanged(user => {
   if (user) {
     // get data
-    db.collection('guides')
+    /*  db.collection('guides')
       .get()
       .then(snapShot => {
         setupGuides(snapShot.docs);
         setupUI(user);
-      });
+      }); */
+    // Realtime Listener
+    db.collection('guides').onSnapshot(snapShot => {
+      setupGuides(snapShot.docs);
+      setupUI(user);
+    });
   } else {
     setupUI();
     setupGuides([]);
@@ -21,8 +26,8 @@ createForm.addEventListener('submit', e => {
 
   db.collection('guides')
     .add({
-      content: createForm['title'].value,
-      title: createForm['content'].value
+      content: createForm['content'].value,
+      title: createForm['title'].value
     })
     .then(() => {
       // close the modal and reset
